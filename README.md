@@ -268,8 +268,59 @@ Arcoíris:           animado dinámico
 
 ```
 game/
-├── ReplicatedStorage/
-│   ├── Modules/                   # Configuración compartida (read-only)
+│
+├── Workspace/                          # 🌍 Mundo físico/visible (service nativo)
+│   ├── Hub/                            # Zona común con todos los jugadores
+│   │   ├── BaseStructure               # Plataforma central, suelo, paredes
+│   │   ├── EggMachines/                # 5-6 máquinas de huevo
+│   │   │   ├── EggMachine_Basic
+│   │   │   ├── EggMachine_Advanced
+│   │   │   ├── EggMachine_Premium
+│   │   │   ├── EggMachine_Cosmic
+│   │   │   ├── EggMachine_Divine
+│   │   │   └── EggMachine_VIP
+│   │   ├── ShopNPC                     # NPC vendedor de gamepasses
+│   │   ├── DailyRewardKiosk            # Kiosko para reclamar daily
+│   │   ├── LeaderboardDisplay          # Top jugadores visible
+│   │   ├── Decorations/                # Estatuas, fuentes, neones, props
+│   │   ├── Lighting/                   # Luces puntuales del Hub (PointLight, SpotLight)
+│   │   └── Teleporters/                # Hacia VIP Lounge, eventos, etc.
+│   │
+│   ├── Plots/                          # Plots privados (se generan dinámicamente)
+│   │   ├── Plot_1                      # Asignado a player 1
+│   │   ├── Plot_2
+│   │   └── ... (uno por jugador del server)
+│   │
+│   ├── EventArea/                      # Zona temporal de eventos limitados
+│   │   └── (vacío hasta que haya evento activo)
+│   │
+│   ├── SpawnLocation                   # Punto de aparición inicial
+│   ├── Baseplate                       # Suelo base (eliminar si tienes mapa custom)
+│   ├── Terrain                         # Terreno editable (si lo usas)
+│   └── Camera                          # Cámara del juego (no tocar)
+│
+├── Lighting/                           # 💡 Iluminación global (service nativo)
+│   ├── Atmosphere                      # Niebla, densidad, color del aire
+│   ├── Sky                             # Skybox personalizado (cielo nocturno con estrellas)
+│   ├── Bloom                           # Efecto bloom para neones brillantes
+│   ├── ColorCorrection                 # Saturación, contraste, tinte general
+│   ├── DepthOfField                    # Desenfoque de profundidad (opcional)
+│   ├── SunRays                         # Rayos del sol (suaves, no abusar)
+│   └── BlurEffect                      # Para fade-out cuando se abre menú
+│   # Configuración recomendada:
+│   # - Brightness: 1.5
+│   # - ClockTime: 19 (atardecer permanente)
+│   # - GlobalShadows: true
+│   # - Technology: Future (mejor calidad)
+│
+├── ReplicatedFirst/                    # ⚡ Carga ANTES que el resto (service nativo)
+│   ├── LoadingScreen                   # Pantalla de carga inicial
+│   │   ├── ScreenGui
+│   │   └── LoadingScript               # LocalScript que la oculta cuando todo está listo
+│   └── EssentialAssets/                # Assets críticos que deben estar al instante
+│
+├── ReplicatedStorage/                  # 📦 Compartido cliente↔servidor
+│   ├── Modules/                        # Configuración compartida (read-only)
 │   │   ├── MonsterData
 │   │   ├── EggData
 │   │   ├── RarityConfig
@@ -280,63 +331,174 @@ game/
 │   │   ├── ProductData
 │   │   ├── DailyRewards
 │   │   └── Utils/
-│   │       ├── Format
-│   │       ├── Random
-│   │       └── Signal
-│   ├── RemoteEvents/
-│   │   ├── BuyEgg, PlaceMonster, RemoveMonster
-│   │   ├── CollectCash, FuseMonsters, BuyUpgrade
-│   │   ├── DoRebirth, SellMonster, ClaimDailyReward
-│   │   └── DataUpdated
-│   ├── RemoteFunctions/
+│   │       ├── Format                  # Formatear $1.5K, $2.3M, $4.7B
+│   │       ├── Random                  # Weighted random selection
+│   │       └── Signal                  # Sistema de eventos custom
+│   │
+│   ├── RemoteEvents/                   # Comunicación cliente↔servidor (async)
+│   │   ├── BuyEgg
+│   │   ├── PlaceMonster
+│   │   ├── RemoveMonster
+│   │   ├── CollectCash
+│   │   ├── FuseMonsters
+│   │   ├── BuyUpgrade
+│   │   ├── DoRebirth
+│   │   ├── SellMonster
+│   │   ├── ClaimDailyReward
+│   │   └── DataUpdated                 # Server → Client cuando cambian datos
+│   │
+│   ├── RemoteFunctions/                # Queries síncronas
 │   │   ├── GetPlayerData
 │   │   ├── GetFusionPreview
 │   │   └── GetServerStats
+│   │
 │   └── Assets/
-│       ├── Monsters/      # Modelos
-│       ├── Eggs/
-│       ├── VFX/
-│       └── UI/
+│       ├── Monsters/                   # Modelos de cada monstruo
+│       │   ├── goblin_roto
+│       │   ├── sapo_triste
+│       │   └── ... (50-80 modelos)
+│       ├── Eggs/                       # Modelos de huevos
+│       │   ├── egg_basic
+│       │   ├── egg_advanced
+│       │   └── ...
+│       ├── VFX/                        # Particle systems prefabricados
+│       │   ├── DropCommon
+│       │   ├── DropRare
+│       │   ├── DropEpic
+│       │   ├── DropLegendary
+│       │   ├── DropMythic              # Beam vertical + screen shake
+│       │   ├── DropSecret
+│       │   ├── DropDivine
+│       │   ├── FusionExplosion
+│       │   ├── RebirthAscension
+│       │   ├── CashCollect             # Magnetic effect
+│       │   └── Sparkles_Variants/      # Trails para Golden/Rainbow/Void
+│       ├── Animations/                 # Animaciones de monstruos y UI
+│       │   ├── MonsterIdle
+│       │   ├── MonsterEat
+│       │   ├── EggHatch
+│       │   ├── EggIdle                 # Tiembla en máquina
+│       │   └── UIBounce
+│       └── UI/                         # Iconos, imágenes, decals
+│           ├── RarityIcons/
+│           ├── MonsterThumbnails/      # Para inventory display
+│           └── CurrencyIcons/
 │
-├── ServerStorage/
-│   ├── PlotTemplate
-│   └── HubModels/
+├── ServerStorage/                      # 🔒 Privado del servidor
+│   ├── PlotTemplate                    # El plot vacío que se clona por jugador
+│   ├── HubModels/                      # Modelos del hub que el cliente no necesita por adelantado
+│   ├── EventTemplates/                 # Templates de eventos limitados
+│   │   ├── HalloweenEvent
+│   │   ├── ChristmasEvent
+│   │   └── ...
+│   └── AdminTools/                     # Solo para devs (comandos, debug)
 │
-├── ServerScriptService/
-│   ├── Main
+├── ServerScriptService/                # ⚙️ Lógica del servidor
+│   ├── Main                            # Entry point del servidor
 │   ├── Services/
-│   │   ├── DataService           # CRÍTICO: load/save/migration
-│   │   ├── PlotService
-│   │   ├── MonsterService
-│   │   ├── EggService
-│   │   ├── EconomyService
-│   │   ├── FusionService
-│   │   ├── UpgradeService
-│   │   ├── RebirthService
-│   │   ├── GamepassService
-│   │   ├── ProductService
-│   │   ├── DailyRewardService
-│   │   ├── NotificationService
-│   │   └── AntiExploitService
-│   └── Handlers/
+│   │   ├── DataService                 # CRÍTICO: load/save/migration/cache
+│   │   ├── PlotService                 # Asignación y gestión de plots
+│   │   ├── MonsterService              # Spawn/remove monstruos en plots
+│   │   ├── EggService                  # Lógica de compra y drop
+│   │   ├── EconomyService              # Generación pasiva, recolección
+│   │   ├── FusionService               # Lógica de fusiones
+│   │   ├── UpgradeService              # Compra y aplicación de upgrades
+│   │   ├── RebirthService              # Lógica de rebirth
+│   │   ├── GamepassService             # Detectar y aplicar gamepasses
+│   │   ├── ProductService              # Developer products consumibles
+│   │   ├── DailyRewardService          # Login diario
+│   │   ├── NotificationService         # Anuncios globales (drops míticos)
+│   │   ├── BoostService                # Boosts temporales activos
+│   │   ├── EventService                # Gestión de eventos limitados
+│   │   ├── LeaderboardService          # Top jugadores global
+│   │   ├── AnalyticsService            # Tracking de eventos a GameAnalytics
+│   │   └── AntiExploitService          # Validaciones anti-cheat
+│   └── Handlers/                       # Conectan RemoteEvents a Services
+│       ├── BuyEggHandler
+│       ├── PlaceMonsterHandler
+│       ├── CollectCashHandler
+│       ├── FuseMonstersHandler
+│       └── ...
 │
-├── StarterPlayer/
-│   └── StarterPlayerScripts/
-│       ├── Main
-│       ├── Controllers/
-│       │   ├── UIController, PlotController
-│       │   ├── EggController, InventoryController
-│       │   ├── FusionController, ShopController
-│       │   ├── NotificationController, TutorialController
-│       └── State/
-│           └── PlayerState
+├── StarterPlayer/                      # 👤 Configuración del jugador
+│   ├── StarterPlayerScripts/           # LocalScripts que se clonan al jugador
+│   │   ├── Main                        # Entry point del cliente
+│   │   ├── Controllers/
+│   │   │   ├── UIController            # Gestiona qué UI está abierta
+│   │   │   ├── PlotController          # Interacción con slots, hucha
+│   │   │   ├── EggController           # Animación de apertura de huevo
+│   │   │   ├── InventoryController
+│   │   │   ├── FusionController
+│   │   │   ├── ShopController
+│   │   │   ├── NotificationController
+│   │   │   ├── TutorialController
+│   │   │   ├── CameraController        # Efectos de cámara (shake, zoom)
+│   │   │   ├── SoundController         # Reproduce SFX según contexto
+│   │   │   └── InputController         # Inputs de PC, móvil, gamepad
+│   │   └── State/
+│   │       └── PlayerState             # Cache local de datos del player
+│   │
+│   ├── StarterCharacterScripts/        # Scripts que se clonan al CHARACTER (cuerpo)
+│   │   └── (vacío por defecto, scripts custom de movimiento aquí)
+│   │
+│   └── StarterCharacter (opcional)     # Modelo custom del personaje (si reemplazas avatar)
+│   # Configuración recomendada:
+│   # - CharacterWalkSpeed: 16 (default)
+│   # - CharacterJumpHeight: 7.2
+│   # - EnableMouseLockOption: false
+│   # - LoadCharacterAppearance: true
 │
-└── StarterGui/
-    ├── HUD
-    ├── InventoryGui, ShopGui, FusionGui
-    ├── UpgradeGui, RebirthGui, DailyRewardGui
-    ├── NotificationGui
-    └── TutorialGui
+├── StarterPack/                        # 🎒 Tools que se dan al jugador (vacío en simulator)
+│   └── (vacío — no usamos tools)
+│
+├── StarterGui/                         # 🖥 UIs que se clonan al jugador al entrar
+│   ├── HUD                             # Cash, gemas, rebirth count siempre visible
+│   ├── InventoryGui
+│   ├── ShopGui                         # Tienda de gamepasses + dev products
+│   ├── FusionGui
+│   ├── UpgradeGui
+│   ├── RebirthGui
+│   ├── DailyRewardGui
+│   ├── NotificationGui                 # Banners de drops míticos
+│   ├── TutorialGui                     # Tutorial primeros 30s
+│   ├── PetIndexGui                     # Colección de monstruos descubiertos
+│   ├── SettingsGui                     # Música, SFX, idioma
+│   ├── EventGui                        # UI de evento limitado activo
+│   └── ChatGui (default Roblox)        # No tocar, viene por defecto
+│
+├── SoundService/                       # 🔊 Sonidos globales (service nativo)
+│   ├── Music/                          # Música de fondo
+│   │   ├── HubMusic                    # Loop ambient del Hub
+│   │   ├── PlotMusic                   # Música más relajada en plot
+│   │   └── EventMusic                  # Música de evento activo
+│   ├── SFX/                            # Efectos de sonido
+│   │   ├── EggCrack
+│   │   ├── EggHatch
+│   │   ├── DropCommon
+│   │   ├── DropMythic                  # Sonido épico
+│   │   ├── CashCollect
+│   │   ├── CashEarn                    # Pequeño "ding" cada generación
+│   │   ├── Fusion
+│   │   ├── Rebirth                     # Fanfarria
+│   │   ├── ButtonClick
+│   │   ├── ButtonHover
+│   │   ├── PurchaseSuccess
+│   │   ├── ErrorSound
+│   │   └── NotificationDing
+│   └── (configurar RespectFilteringEnabled, AmbientReverb si quieres)
+│
+├── MaterialService/                    # 🎨 Materiales custom (service nativo, opcional)
+│   └── (solo si usas materiales personalizados)
+│
+├── TextChatService/                    # 💬 Chat moderno (service nativo)
+│   ├── ChatWindowConfiguration
+│   ├── ChannelTabsConfiguration
+│   └── TextChannels/
+│       └── RBXGeneral                  # Canal global por defecto
+│   # Personalización: tags VIP, colores por rebirth tier, comandos /trade, etc.
+│
+└── Teams/                              # 👥 Sistema de equipos (no usar en simulator)
+    └── (vacío)
 ```
 
 ### Decisiones arquitectónicas clave
@@ -346,6 +508,148 @@ game/
 - **PlayerState centralizado en cliente:** evita fetches duplicados, todos los Controllers leen del cache
 - **Pcall siempre en DataStore + UpdateAsync sobre SetAsync** para evitar race conditions
 - **Save cada 60s + BindToClose**, nunca por acción individual
+
+### Configuración de services nativos
+
+Los services siguientes vienen por defecto en cada experiencia de Roblox. No se crean — se **configuran** desde el panel Properties cuando los seleccionas en el Explorer.
+
+#### 🌍 Workspace — el mundo del juego
+
+Aquí va todo lo físico y visible. Configuración recomendada en Properties:
+
+- **Gravity:** 196.2 (default — no cambiar a menos que quieras física rara)
+- **FilteringEnabled:** true (siempre, es lo que protege de exploits)
+- **StreamingEnabled:** true (CRÍTICO en simulators con muchos plots) — descarga partes del mapa que el jugador no ve, mejora rendimiento brutal en móvil
+  - StreamingTargetRadius: 1024
+  - StreamingMinRadius: 256
+- **InsertPoint:** dejar por defecto
+
+**Estructura interna que tú creas dentro de Workspace:**
+
+- `Hub/` → la zona común (tu primer trabajo de mapa)
+- `Plots/` → los plots se generan dinámicamente al entrar jugadores (lo hace `PlotService`)
+- `EventArea/` → vacío hasta que haya evento activo
+- `SpawnLocation` → punto de aparición inicial (la baseplate trae uno por defecto)
+
+#### 💡 Lighting — iluminación global
+
+La estética visual del juego sale 50% de aquí. Configuración para tu paleta nocturna con neones:
+
+| Propiedad | Valor recomendado | Por qué |
+|---|---|---|
+| Brightness | 1.5-2 | Iluminación general |
+| ClockTime | 19 (atardecer) o 0 (noche) | Para tu tema nocturno |
+| GeographicLatitude | 41.5 | Posición del sol |
+| GlobalShadows | true | Sombras realistas |
+| Technology | Future | Mejor calidad de iluminación |
+| Ambient | (40, 40, 60) RGB | Tinte morado en sombras |
+| OutdoorAmbient | (50, 50, 70) RGB | Tinte cielo nocturno |
+| EnvironmentDiffuseScale | 0.5 | Reflejos del entorno |
+| EnvironmentSpecularScale | 0.5 | Brillos del entorno |
+
+**Hijos que añadir dentro de Lighting:**
+
+- **Atmosphere** → niebla y densidad del aire
+  - Density: 0.3
+  - Color: morado (~#1A0B2E)
+  - Decay: morado claro
+  - Glare: 0
+  - Haze: 1
+- **Sky** → skybox personalizado (busca "night sky" o "stars" en Toolbox)
+- **Bloom** → efecto bloom para hacer que neones brillen
+  - Intensity: 0.4
+  - Size: 24
+  - Threshold: 1.5
+- **ColorCorrection** → tinte global
+  - Saturation: 0.2
+  - Contrast: 0.1
+  - TintColor: (255, 230, 255) ligero tinte rosa
+- **DepthOfField** (opcional) → desenfoque cinematográfico
+- **SunRays** → solo si quieres sol visible
+- **BlurEffect** (Enabled: false por defecto) → para activar cuando se abre menú
+
+#### 🔊 SoundService — sonidos globales
+
+Configuración:
+
+- **AmbientReverb:** Hangar (da sensación de espacio amplio) o NoReverb si no quieres efecto
+- **DistanceFactor:** 3.33
+- **DopplerScale:** 1
+- **RolloffScale:** 1
+- **RespectFilteringEnabled:** true (importante para anti-cheat de sonidos)
+
+**Estructura de hijos:**
+
+- **Music/** (carpeta Folder)
+  - HubMusic → Sound con SoundId, Looped: true, Volume: 0.3
+  - PlotMusic → ídem, Volume: 0.25
+  - EventMusic → ídem
+- **SFX/** (carpeta Folder) → todos los efectos de sonido como objetos Sound
+
+Los sonidos se reproducen desde el cliente (LocalScript) usando `SoundService.SFX.EggHatch:Play()`.
+
+#### ⚡ ReplicatedFirst — pantalla de carga
+
+Lo que metas aquí se descarga ANTES que el resto. Úsalo para:
+
+- LoadingScreen (ScreenGui con tu logo, animación, barra de progreso)
+- LocalScript que oculta el default loading de Roblox y muestra el tuyo
+- Después espera con `game:IsLoaded()` y oculta el LoadingScreen cuando todo esté listo
+
+```lua
+-- ReplicatedFirst/LoadingScript (LocalScript)
+local ReplicatedFirst = game:GetService("ReplicatedFirst")
+ReplicatedFirst:RemoveDefaultLoadingScreen()
+
+-- Mostrar tu loading custom
+local loadingScreen = script.Parent.LoadingScreen
+loadingScreen.Parent = game.Players.LocalPlayer.PlayerGui
+
+-- Esperar a que todo cargue
+if not game:IsLoaded() then game.Loaded:Wait() end
+
+-- Animar fade-out y eliminar
+loadingScreen:Destroy()
+```
+
+#### 💬 TextChatService — sistema de chat
+
+El chat moderno de Roblox. Configuración recomendada:
+
+- **CreateDefaultCommands:** true (comandos /me, /w, etc.)
+- **CreateDefaultTextChannels:** true
+- **ChatVersion:** TextChatService (no LegacyChatService, es viejo)
+
+**Personalizaciones útiles:**
+
+- Tags por rebirth tier (server-side script que añade prefix `[R5]` al nombre)
+- Color de nombre VIP (dorado para gamepass VIP)
+- Anuncios globales de drops míticos van por aquí (system message en RBXSystem channel)
+- Comandos custom: `/trade @player`, `/inv`, `/stats`
+
+#### 🎨 MaterialService — materiales custom
+
+Solo si vas a usar materiales personalizados. Para empezar puedes ignorarlo y usar los materiales por defecto de Roblox (Plastic, Neon, Metal, etc.). Los Neon son perfectos para tu estética con neones.
+
+#### 👥 Teams, StarterPack — no usar
+
+- **Teams:** vacío. Los simulators no usan equipos.
+- **StarterPack:** vacío. No damos tools/herramientas al jugador (no hay armas ni inventario tipo Minecraft).
+
+### Orden de creación recomendado en Studio
+
+Cuando empieces a construir, sigue este orden para no perderte:
+
+1. **Lighting** → configurar para que el ambiente visual esté antes de modelar
+2. **Workspace/Hub** → construir el Hub básico (plataforma, decoraciones, máquinas)
+3. **ServerStorage/PlotTemplate** → diseñar el plot vacío (slots, hucha, altar de fusión)
+4. **ReplicatedStorage/Modules** → todos los ModuleScripts de configuración
+5. **ReplicatedStorage/Assets** → importar y organizar los modelos
+6. **SoundService** → meter música y SFX
+7. **ServerScriptService/Services** → empezar con DataService, luego PlotService
+8. **StarterGui** → las UIs después de que la lógica funcione
+9. **StarterPlayerScripts/Controllers** → los controllers conectan UIs con lógica
+10. **ReplicatedFirst** → loading screen al final, cuando todo lo demás está
 
 ---
 
@@ -916,6 +1220,10 @@ Este README es el **documento maestro de referencia** del proyecto. Se actualiza
 
 ---
 
-**Versión del documento:** 1.0
+**Versión del documento:** 1.1
 **Última actualización:** Mayo 2026
 **Estado del proyecto:** Pre-desarrollo — preparando entorno
+
+**Changelog:**
+- v1.1 — Estructura de carpetas ampliada con todos los services nativos (Workspace, Lighting, SoundService, ReplicatedFirst, TextChatService) + sección de configuración visual de cada uno + orden de creación recomendado
+- v1.0 — Documento inicial
